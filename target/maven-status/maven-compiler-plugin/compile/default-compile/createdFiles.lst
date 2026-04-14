@@ -1,0 +1,16 @@
+com/smartdeviceos/entity/DeviceAppId.class
+com/smartdeviceos/entity/UserAppId.class
+com/smartdeviceos/entity/Wallpaper.class
+com/smartdeviceos/entity/Icon.class
+com/smartdeviceos/entity/Theme.class
+com/smartdeviceos/entity/Family.class
+com/smartdeviceos/entity/DeviceApp.class
+com/smartdeviceos/entity/MenuItem.class
+com/smartdeviceos/entity/Menu.class
+com/smartdeviceos/entity/App.class
+com/smartdeviceos/entity/UserApp.class
+com/smartdeviceos/entity/FamilyMember.class
+com/smartdeviceos/entity/FamilyMemberId.class
+com/smartdeviceos/entity/Device.class
+com/smartdeviceos/SmartDeviceOsApplication.class
+com/smartdeviceos/entity/User.class

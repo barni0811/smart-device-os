@@ -130,6 +130,36 @@ mvn clean compile
 mvn spring-boot:run
 ```
 
+## Database Access
+
+### H2 Database Console
+
+Once the application is running, you can access the H2 database console:
+
+**URL:** `http://localhost:8080/h2-console`
+
+**Login Details:**
+- **JDBC URL:** `jdbc:h2:mem:smartdeviceos`
+- **User Name:** `sa`
+- **Password:** `password`
+
+### Database Schema
+
+The application automatically creates all 12 tables from your entity classes:
+
+- `users` - User accounts
+- `devices` - User devices
+- `apps` - Available applications
+- `menus` - Device menus
+- `menu_items` - Menu items and submenus
+- `families` - Family groups
+- `family_members` - Family member relationships
+- `icons` - Application icons
+- `wallpapers` - Device wallpapers
+- `themes` - UI themes
+- `user_apps` - User-application relationships
+- `device_apps` - Device-application installations
+
 ## Interactive CLI
 
 On application startup:
