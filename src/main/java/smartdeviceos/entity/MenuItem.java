@@ -1,4 +1,4 @@
-package com.smartdeviceos.entity;
+package smartdeviceos.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -41,7 +41,6 @@ public class MenuItem {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    // Constructors
     public MenuItem() {}
 
     public MenuItem(String id, String name, Menu menu) {
@@ -65,7 +64,6 @@ public class MenuItem {
         this.submenu = submenu;
     }
 
-    // Getters and Setters
     public String getId() {
         return id;
     }
@@ -130,7 +128,6 @@ public class MenuItem {
         this.createdAt = createdAt;
     }
 
-    // Business logic methods
     public boolean isApplication() {
         return app != null;
     }

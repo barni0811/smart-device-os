@@ -1,4 +1,4 @@
-package com.smartdeviceos.entity;
+package smartdeviceos.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -30,15 +30,12 @@ public class Menu {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    // One-to-many relationships
     @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MenuItem> menuItems;
 
-    // Self-referencing for submenus
     @OneToMany(mappedBy = "submenu")
     private List<MenuItem> parentMenuItems;
 
-    // Constructors
     public Menu() {}
 
     public Menu(String id, String name, Device device) {
@@ -47,7 +44,6 @@ public class Menu {
         this.device = device;
     }
 
-    // Getters and Setters
     public String getId() {
         return id;
     }

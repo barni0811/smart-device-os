@@ -1,4 +1,4 @@
-package com.smartdeviceos.entity;
+package smartdeviceos.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -25,13 +25,12 @@ public class FamilyMember {
 
     @NotBlank(message = "Role is required")
     @Column(name = "role", nullable = false)
-    private String role; // 'parent', 'child', 'member'
+    private String role;
 
     @CreationTimestamp
     @Column(name = "joined_at", updatable = false)
     private LocalDateTime joinedAt;
 
-    // Constructors
     public FamilyMember() {}
 
     public FamilyMember(Family family, User user, String role) {
@@ -41,7 +40,6 @@ public class FamilyMember {
         this.id = new FamilyMemberId(family.getId(), user.getId());
     }
 
-    // Getters and Setters
     public FamilyMemberId getId() {
         return id;
     }

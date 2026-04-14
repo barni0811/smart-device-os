@@ -1,4 +1,4 @@
-package com.smartdeviceos.entity;
+package smartdeviceos.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -21,7 +21,7 @@ public class Device {
     private String name;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -43,14 +43,12 @@ public class Device {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // One-to-many relationships
     @OneToMany(mappedBy = "device", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Menu> menus;
 
     @OneToMany(mappedBy = "device", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DeviceApp> deviceApps;
 
-    // Constructors
     public Device() {}
 
     public Device(String id, String name, User user) {
@@ -59,7 +57,6 @@ public class Device {
         this.user = user;
     }
 
-    // Getters and Setters
     public String getId() {
         return id;
     }

@@ -1,4 +1,4 @@
-package com.smartdeviceos.entity;
+package smartdeviceos.entity;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -32,7 +32,6 @@ public class DeviceApp {
     @Column(name = "usage_count")
     private Integer usageCount = 0;
 
-    // Constructors
     public DeviceApp() {}
 
     public DeviceApp(Device device, App app) {
@@ -41,7 +40,6 @@ public class DeviceApp {
         this.id = new DeviceAppId(device.getId(), app.getId());
     }
 
-    // Getters and Setters
     public DeviceAppId getId() {
         return id;
     }
@@ -90,7 +88,6 @@ public class DeviceApp {
         this.usageCount = usageCount;
     }
 
-    // Business methods
     public void incrementUsageCount() {
         this.usageCount++;
         this.lastUsed = LocalDateTime.now();

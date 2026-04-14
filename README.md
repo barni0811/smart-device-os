@@ -127,7 +127,7 @@ The database diagram is available in `docs/db-diagram.png`.
 
 ```bash
 mvn clean compile
-mvn spring-boot:run
+mvn spring-boot:run -q
 ```
 
 ## Database Access

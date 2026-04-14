@@ -1,4 +1,4 @@
-package com.smartdeviceos.entity;
+package smartdeviceos.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -8,14 +8,14 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "icons")
-public class Icon {
+@Table(name = "wallpapers")
+public class Wallpaper {
 
     @Id
     @Column(name = "id")
     private String id;
 
-    @NotBlank(message = "Icon name is required")
+    @NotBlank(message = "Wallpaper name is required")
     @Column(name = "name", nullable = false)
     private String name;
 
@@ -23,24 +23,31 @@ public class Icon {
     @Column(name = "image_path", nullable = false)
     private String imagePath;
 
+    @Column(name = "is_default")
+    private Boolean isDefault = false;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
     // One-to-many relationships
-    @OneToMany(mappedBy = "icon", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MenuItem> menuItems;
-
-    @OneToMany(mappedBy = "defaultIcon", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<App> defaultForApps;
+    @OneToMany(mappedBy = "wallpaper", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Device> devices;
 
     // Constructors
-    public Icon() {}
+    public Wallpaper() {}
 
-    public Icon(String id, String name, String imagePath) {
+    public Wallpaper(String id, String name, String imagePath) {
         this.id = id;
         this.name = name;
         this.imagePath = imagePath;
+    }
+
+    public Wallpaper(String id, String name, String imagePath, Boolean isDefault) {
+        this.id = id;
+        this.name = name;
+        this.imagePath = imagePath;
+        this.isDefault = isDefault;
     }
 
     // Getters and Setters
@@ -68,6 +75,14 @@ public class Icon {
         this.imagePath = imagePath;
     }
 
+    public Boolean getIsDefault() {
+        return isDefault;
+    }
+
+    public void setIsDefault(Boolean isDefault) {
+        this.isDefault = isDefault;
+    }
+
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
@@ -76,28 +91,21 @@ public class Icon {
         this.createdAt = createdAt;
     }
 
-    public List<MenuItem> getMenuItems() {
-        return menuItems;
+    public List<Device> getDevices() {
+        return devices;
     }
 
-    public void setMenuItems(List<MenuItem> menuItems) {
-        this.menuItems = menuItems;
-    }
-
-    public List<App> getDefaultForApps() {
-        return defaultForApps;
-    }
-
-    public void setDefaultForApps(List<App> defaultForApps) {
-        this.defaultForApps = defaultForApps;
+    public void setDevices(List<Device> devices) {
+        this.devices = devices;
     }
 
     @Override
     public String toString() {
-        return "Icon{" +
+        return "Wallpaper{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", imagePath='" + imagePath + '\'' +
+                ", isDefault=" + isDefault +
                 '}';
     }
 }

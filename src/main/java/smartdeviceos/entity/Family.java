@@ -1,4 +1,4 @@
-package com.smartdeviceos.entity;
+package smartdeviceos.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -27,11 +27,9 @@ public class Family {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    // One-to-many relationships
     @OneToMany(mappedBy = "family", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<FamilyMember> members;
 
-    // Constructors
     public Family() {}
 
     public Family(String id, String name, User owner) {
@@ -40,7 +38,6 @@ public class Family {
         this.owner = owner;
     }
 
-    // Getters and Setters
     public String getId() {
         return id;
     }

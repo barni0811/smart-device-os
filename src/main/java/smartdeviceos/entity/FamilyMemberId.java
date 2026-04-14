@@ -1,4 +1,4 @@
-package com.smartdeviceos.entity;
+package smartdeviceos.entity;
 
 import jakarta.persistence.Embeddable;
 
@@ -10,7 +10,6 @@ public class FamilyMemberId {
     private String familyId;
     private String userId;
 
-    // Constructors
     public FamilyMemberId() {}
 
     public FamilyMemberId(String familyId, String userId) {
@@ -18,7 +17,6 @@ public class FamilyMemberId {
         this.userId = userId;
     }
 
-    // Getters and Setters
     public String getFamilyId() {
         return familyId;
     }

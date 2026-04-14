@@ -1,30 +1,30 @@
-package com.smartdeviceos.entity;
+package smartdeviceos.entity;
 
 import jakarta.persistence.Embeddable;
 
 import java.util.Objects;
 
 @Embeddable
-public class DeviceAppId {
+public class UserAppId {
 
-    private String deviceId;
+    private String userId;
     private String appId;
 
     // Constructors
-    public DeviceAppId() {}
+    public UserAppId() {}
 
-    public DeviceAppId(String deviceId, String appId) {
-        this.deviceId = deviceId;
+    public UserAppId(String userId, String appId) {
+        this.userId = userId;
         this.appId = appId;
     }
 
     // Getters and Setters
-    public String getDeviceId() {
-        return deviceId;
+    public String getUserId() {
+        return userId;
     }
 
-    public void setDeviceId(String deviceId) {
-        this.deviceId = deviceId;
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
     public String getAppId() {
@@ -39,20 +39,20 @@ public class DeviceAppId {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        DeviceAppId that = (DeviceAppId) o;
-        return Objects.equals(deviceId, that.deviceId) &&
+        UserAppId that = (UserAppId) o;
+        return Objects.equals(userId, that.userId) &&
                Objects.equals(appId, that.appId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(deviceId, appId);
+        return Objects.hash(userId, appId);
     }
 
     @Override
     public String toString() {
-        return "DeviceAppId{" +
-                "deviceId='" + deviceId + '\'' +
+        return "UserAppId{" +
+                "userId='" + userId + '\'' +
                 ", appId='" + appId + '\'' +
                 '}';
     }

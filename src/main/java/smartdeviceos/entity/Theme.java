@@ -1,4 +1,4 @@
-package com.smartdeviceos.entity;
+package smartdeviceos.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -8,20 +8,25 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "wallpapers")
-public class Wallpaper {
+@Table(name = "themes")
+public class Theme {
 
     @Id
     @Column(name = "id")
     private String id;
 
-    @NotBlank(message = "Wallpaper name is required")
+    @NotBlank(message = "Theme name is required")
     @Column(name = "name", nullable = false)
     private String name;
 
-    @NotBlank(message = "Image path is required")
-    @Column(name = "image_path", nullable = false)
-    private String imagePath;
+    @Column(name = "primary_color")
+    private String primaryColor;
+
+    @Column(name = "secondary_color")
+    private String secondaryColor;
+
+    @Column(name = "font_family")
+    private String fontFamily;
 
     @Column(name = "is_default")
     private Boolean isDefault = false;
@@ -31,23 +36,23 @@ public class Wallpaper {
     private LocalDateTime createdAt;
 
     // One-to-many relationships
-    @OneToMany(mappedBy = "wallpaper", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "theme", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Device> devices;
 
     // Constructors
-    public Wallpaper() {}
+    public Theme() {}
 
-    public Wallpaper(String id, String name, String imagePath) {
+    public Theme(String id, String name) {
         this.id = id;
         this.name = name;
-        this.imagePath = imagePath;
     }
 
-    public Wallpaper(String id, String name, String imagePath, Boolean isDefault) {
+    public Theme(String id, String name, String primaryColor, String secondaryColor, String fontFamily) {
         this.id = id;
         this.name = name;
-        this.imagePath = imagePath;
-        this.isDefault = isDefault;
+        this.primaryColor = primaryColor;
+        this.secondaryColor = secondaryColor;
+        this.fontFamily = fontFamily;
     }
 
     // Getters and Setters
@@ -67,12 +72,28 @@ public class Wallpaper {
         this.name = name;
     }
 
-    public String getImagePath() {
-        return imagePath;
+    public String getPrimaryColor() {
+        return primaryColor;
     }
 
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
+    public void setPrimaryColor(String primaryColor) {
+        this.primaryColor = primaryColor;
+    }
+
+    public String getSecondaryColor() {
+        return secondaryColor;
+    }
+
+    public void setSecondaryColor(String secondaryColor) {
+        this.secondaryColor = secondaryColor;
+    }
+
+    public String getFontFamily() {
+        return fontFamily;
+    }
+
+    public void setFontFamily(String fontFamily) {
+        this.fontFamily = fontFamily;
     }
 
     public Boolean getIsDefault() {
@@ -101,10 +122,12 @@ public class Wallpaper {
 
     @Override
     public String toString() {
-        return "Wallpaper{" +
+        return "Theme{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
-                ", imagePath='" + imagePath + '\'' +
+                ", primaryColor='" + primaryColor + '\'' +
+                ", secondaryColor='" + secondaryColor + '\'' +
+                ", fontFamily='" + fontFamily + '\'' +
                 ", isDefault=" + isDefault +
                 '}';
     }
