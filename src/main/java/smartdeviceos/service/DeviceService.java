@@ -4,6 +4,7 @@ import smartdeviceos.entity.Device;
 import smartdeviceos.entity.User;
 import smartdeviceos.entity.Wallpaper;
 import smartdeviceos.entity.Theme;
+import smartdeviceos.repository.UserRepository;
 import smartdeviceos.repository.DeviceRepository;
 import smartdeviceos.repository.WallpaperRepository;
 import smartdeviceos.repository.ThemeRepository;
@@ -21,13 +22,16 @@ public class DeviceService {
     private final DeviceRepository deviceRepository;
     private final WallpaperRepository wallpaperRepository;
     private final ThemeRepository themeRepository;
+    private final UserRepository userRepository;
     
     public DeviceService(DeviceRepository deviceRepository, 
                         WallpaperRepository wallpaperRepository,
-                        ThemeRepository themeRepository) {
+                        ThemeRepository themeRepository,
+                        UserRepository userRepository) {
         this.deviceRepository = deviceRepository;
         this.wallpaperRepository = wallpaperRepository;
         this.themeRepository = themeRepository;
+        this.userRepository = userRepository;
     }
     
     public Device createDevice(String userId, String deviceName) {
@@ -35,6 +39,10 @@ public class DeviceService {
         device.setId(UUID.randomUUID().toString());
         device.setName(deviceName);
         device.setIsDefaultMenu(false);
+        
+        // Find and set the user
+        Optional<User> userOpt = userRepository.findById(userId);
+        userOpt.ifPresent(device::setUser);
         
         wallpaperRepository.findByIsDefaultTrue().ifPresent(device::setWallpaper);
         themeRepository.findByIsDefaultTrue().ifPresent(device::setTheme);
@@ -78,7 +86,7 @@ public class DeviceService {
     }
     
     public List<Device> getDevicesByUserId(String userId) {
-        return deviceRepository.findByUserId(userId);
+        return deviceRepository.findByUser_Id(userId);
     }
     
     public Optional<Device> getDefaultDeviceByUserId(String userId) {
@@ -87,5 +95,9 @@ public class DeviceService {
     
     public List<Device> getAllDevices() {
         return deviceRepository.findAll();
+    }
+    
+    public List<Device> getAllDevicesWithUsers() {
+        return deviceRepository.findAllWithUsers();
     }
 }

@@ -17,6 +17,8 @@ public interface MenuRepository extends JpaRepository<Menu, String> {
     
     Optional<Menu> findByDevice(Device device);
     
+    List<Menu> findAllByDeviceId(String deviceId);
+    
     List<Menu> findByIsDefault(Boolean isDefault);
     
     @Query("SELECT m FROM Menu m WHERE m.device.id = :deviceId AND m.isDefault = true")
@@ -25,5 +27,13 @@ public interface MenuRepository extends JpaRepository<Menu, String> {
     @Query("SELECT m FROM Menu m WHERE m.device.user.id = :userId")
     List<Menu> findByUserId(@Param("userId") String userId);
     
+    @Query("SELECT m FROM Menu m LEFT JOIN FETCH m.device WHERE m.device.id = :deviceId")
+    List<Menu> findAllByDeviceIdWithDevice(@Param("deviceId") String deviceId);
+    
+    // Find menus that are NOT submenus (don't appear as submenu in any MenuItem)
+    @Query("SELECT m FROM Menu m WHERE m.device.id = :deviceId AND m.id NOT IN (SELECT mi.submenu.id FROM MenuItem mi WHERE mi.submenu IS NOT NULL)")
+    List<Menu> findMainMenusByDeviceId(@Param("deviceId") String deviceId);
+    
     boolean existsByDeviceId(String deviceId);
+    boolean existsByNameAndDeviceId(String name, String deviceId);
 }

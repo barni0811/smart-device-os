@@ -2,6 +2,7 @@ package smartdeviceos.service;
 
 import smartdeviceos.entity.Family;
 import smartdeviceos.entity.FamilyMember;
+import smartdeviceos.entity.FamilyMemberId;
 import smartdeviceos.entity.User;
 import smartdeviceos.repository.FamilyRepository;
 import smartdeviceos.repository.FamilyMemberRepository;
@@ -70,6 +71,8 @@ public class FamilyService {
         familyMember.setFamily(familyOpt.get());
         familyMember.setUser(userOpt.get());
         familyMember.setRole(role);
+        // Initialize the embedded ID properly
+        familyMember.setId(new FamilyMemberId(familyId, userId));
         
         return familyMemberRepository.save(familyMember);
     }

@@ -84,6 +84,10 @@ public class UserService {
         return userRepository.findByIsActive(true);
     }
     
+    public List<User> searchUsersByName(String searchTerm) {
+        return userRepository.findByNameContainingIgnoreCase(searchTerm);
+    }
+    
     public User createCurrentUser() {
         String currentUserName = "current_user";
         return createUser(currentUserName);

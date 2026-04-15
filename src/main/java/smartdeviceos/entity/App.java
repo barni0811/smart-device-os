@@ -19,15 +19,9 @@ public class App {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @Column(name = "description", columnDefinition = "TEXT")
-    private String description;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "default_icon_id")
     private Icon defaultIcon;
-
-    @Column(name = "category")
-    private String category;
 
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
@@ -54,12 +48,6 @@ public class App {
         this.name = name;
     }
 
-    public App(String id, String name, String description, String category) {
-        this.id = id;
-        this.name = name;
-        this.description = description;
-        this.category = category;
-    }
 
     // Getters and Setters
     public String getId() {
@@ -78,28 +66,12 @@ public class App {
         this.name = name;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     public Icon getDefaultIcon() {
         return defaultIcon;
     }
 
     public void setDefaultIcon(Icon defaultIcon) {
         this.defaultIcon = defaultIcon;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
     }
 
     public LocalDateTime getCreatedAt() {
@@ -147,7 +119,6 @@ public class App {
         return "App{" +
                 "id='" + id + '\'' +
                 ", name='" + name + '\'' +
-                ", category='" + category + '\'' +
                 ", isActive=" + isActive +
                 '}';
     }

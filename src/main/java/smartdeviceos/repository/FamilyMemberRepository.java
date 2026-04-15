@@ -29,7 +29,7 @@ public interface FamilyMemberRepository extends JpaRepository<FamilyMember, Fami
     
     List<FamilyMember> findByFamilyIdAndRole(String familyId, String role);
     
-    @Query("SELECT fm FROM FamilyMember fm WHERE fm.family.id = :familyId ORDER BY fm.role, fm.joinedAt")
+    @Query("SELECT fm FROM FamilyMember fm JOIN FETCH fm.user WHERE fm.family.id = :familyId ORDER BY fm.role, fm.joinedAt")
     List<FamilyMember> findByFamilyIdOrderByRole(@Param("familyId") String familyId);
     
     @Query("SELECT COUNT(fm) FROM FamilyMember fm WHERE fm.family.id = :familyId")

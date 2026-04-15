@@ -16,15 +16,10 @@ public interface AppRepository extends JpaRepository<App, String> {
     
     List<App> findByNameContainingIgnoreCase(String name);
     
-    List<App> findByCategory(String category);
-    
     List<App> findByIsActive(Boolean isActive);
     
     @Query("SELECT a FROM App a WHERE a.isActive = true ORDER BY a.name")
     List<App> findActiveAppsOrderByName();
-    
-    @Query("SELECT DISTINCT a.category FROM App a WHERE a.isActive = true")
-    List<String> findActiveCategories();
     
     boolean existsByName(String name);
 }

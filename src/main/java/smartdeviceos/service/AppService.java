@@ -33,7 +33,7 @@ public class AppService {
         this.deviceAppRepository = deviceAppRepository;
     }
     
-    public App createApp(String name, String description, String category, String defaultIconId) {
+    public App createApp(String name, String defaultIconId) {
         if (appRepository.existsByName(name)) {
             throw new IllegalArgumentException("App with name '" + name + "' already exists");
         }
@@ -41,8 +41,6 @@ public class AppService {
         App app = new App();
         app.setId(UUID.randomUUID().toString());
         app.setName(name);
-        app.setDescription(description);
-        app.setCategory(category);
         app.setIsActive(true);
         
         if (defaultIconId != null) {
@@ -53,7 +51,7 @@ public class AppService {
         return appRepository.save(app);
     }
     
-    public App updateApp(String appId, String newName, String newDescription, String newCategory) {
+    public App updateApp(String appId, String newName) {
         Optional<App> appOpt = appRepository.findById(appId);
         if (appOpt.isEmpty()) {
             throw new IllegalArgumentException("App not found with ID: " + appId);
@@ -66,8 +64,6 @@ public class AppService {
         }
         
         app.setName(newName);
-        app.setDescription(newDescription);
-        app.setCategory(newCategory);
         
         return appRepository.save(app);
     }
@@ -131,12 +127,22 @@ public class AppService {
         return appRepository.findActiveAppsOrderByName();
     }
     
-    public List<App> getAppsByCategory(String category) {
-        return appRepository.findByCategory(category);
-    }
-    
-    public List<String> getActiveCategories() {
-        return appRepository.findActiveCategories();
+    public void createDefaultIPhoneApps() {
+        String[] iphoneApps = {
+            "Phone", "Messages", "Photos", "Camera", "Maps", 
+            "Weather", "Clock", "Calendar", "Contacts", "Notes",
+            "Reminders", "Mail", "Music", "Safari", "Settings",
+            "App Store", "Calculator", "Voice Memos", "Compass", "Chess"
+        };
+        
+        for (String appName : iphoneApps) {
+            try {
+                createApp(appName, null);
+            } catch (Exception e) {
+                // Skip if app already exists
+                System.out.println("Note: App '" + appName + "' already exists or had an error.");
+            }
+        }
     }
     
     public List<DeviceApp> getRecentlyUsedApps(String deviceId) {

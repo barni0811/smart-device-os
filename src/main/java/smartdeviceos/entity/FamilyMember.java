@@ -18,7 +18,7 @@ public class FamilyMember {
     @JoinColumn(name = "family_id", nullable = false)
     private Family family;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @MapsId("userId")
     @JoinColumn(name = "user_id", nullable = false)
     private User user;

@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 public interface DeviceRepository extends JpaRepository<Device, String> {
     
-    List<Device> findByUserId(String userId);
+    List<Device> findByUser_Id(String userId);
     
     List<Device> findByUser(User user);
     
@@ -23,6 +23,9 @@ public interface DeviceRepository extends JpaRepository<Device, String> {
     
     @Query("SELECT d FROM Device d WHERE d.user.id = :userId AND d.isDefaultMenu = true")
     Optional<Device> findDefaultDeviceByUserId(@Param("userId") String userId);
+    
+    @Query("SELECT d FROM Device d LEFT JOIN FETCH d.user")
+    List<Device> findAllWithUsers();
     
     boolean existsByNameAndUserId(String name, String userId);
 }

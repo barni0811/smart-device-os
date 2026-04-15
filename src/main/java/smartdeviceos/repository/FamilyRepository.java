@@ -21,7 +21,7 @@ public interface FamilyRepository extends JpaRepository<Family, String> {
     
     Optional<Family> findByOwner(User owner);
     
-    @Query("SELECT f FROM Family f WHERE f.owner.id = :userId")
+    @Query("SELECT f FROM Family f JOIN FETCH f.owner WHERE f.owner.id = :userId")
     List<Family> findFamiliesOwnedByUser(@Param("userId") String userId);
     
     @Query("SELECT f FROM Family f JOIN f.members fm WHERE fm.user.id = :userId")
