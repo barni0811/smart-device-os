@@ -73,9 +73,27 @@ public class SmartDeviceOsCLI implements CommandLineRunner {
                 var submenu = menuService.createSubmenu(menu.getId(), "default_submenu");
                 // Add submenu as a menu item to the parent menu
                 menuService.addSubmenuToMenu(menu.getId(), submenu.getId(), "default_submenu", 1);
+                
+                addDefaultAppsToMenu(menu.getId());
             }
         } catch (Exception e) {
             System.out.println("Error setting up current user: " + e.getMessage());
+        }
+    }
+
+    private void addDefaultAppsToMenu(String menuId) {
+        String[] defaultApps = {"App Store", "Calculator", "Calendar", "Camera", "Phone", "Photos", "Settings"};
+        int position = 2;
+        
+        for (String appName : defaultApps) {
+            try {
+                var appOpt = appService.findAppByName(appName);
+                if (appOpt.isPresent()) {
+                    menuService.addApplicationToMenu(menuId, appOpt.get().getId(), appName, position);
+                    position++;
+                }
+            } catch (Exception e) {
+            }
         }
     }
 

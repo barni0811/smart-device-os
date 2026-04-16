@@ -4,6 +4,7 @@ import smartdeviceos.service.DeviceService;
 import smartdeviceos.service.UserService;
 import smartdeviceos.service.MenuService;
 import smartdeviceos.service.CustomizationService;
+import smartdeviceos.service.AppService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +24,9 @@ public class DeviceMenu {
     
     @Autowired
     private CustomizationService customizationService;
+    
+    @Autowired
+    private AppService appService;
     
     @Autowired
     private MenuManagementMenu menuManagementMenu;
@@ -194,6 +198,7 @@ public class DeviceMenu {
                         var menu = menuService.createMainMenu(device.getId(), "default_menu");
                         var submenu = menuService.createSubmenu(menu.getId(), "default_submenu");
                         menuService.addSubmenuToMenu(menu.getId(), submenu.getId(), "default_submenu", 1);
+                        addDefaultAppsToMenu(menu.getId());
                     } catch (Exception e) {
                         System.out.println("Note: Could not create default menu for device: " + e.getMessage());
                     }
@@ -286,6 +291,22 @@ public class DeviceMenu {
             System.out.println("Default menu set successfully for device: " + deviceName);
         } catch (Exception e) {
             System.out.println("Error setting default menu: " + e.getMessage());
+        }
+    }
+    
+    private void addDefaultAppsToMenu(String menuId) {
+        String[] defaultApps = {"App Store", "Calculator", "Calendar", "Camera", "Phone", "Photos", "Settings"};
+        int position = 2;
+        
+        for (String appName : defaultApps) {
+            try {
+                var appOpt = appService.findAppByName(appName);
+                if (appOpt.isPresent()) {
+                    menuService.addApplicationToMenu(menuId, appOpt.get().getId(), appName, position);
+                    position++;
+                }
+            } catch (Exception e) {
+            }
         }
     }
     
