@@ -7,7 +7,11 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "menu_items")
+@Table(name = "menu_items", 
+    uniqueConstraints = {
+        @UniqueConstraint(name = "uk_menu_app", columnNames = {"menu_id", "app_id"}),
+        @UniqueConstraint(name = "uk_menu_submenu", columnNames = {"menu_id", "submenu_id"})
+    })
 public class MenuItem {
 
     @Id

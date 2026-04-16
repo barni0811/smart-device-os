@@ -74,63 +74,82 @@ public class IconManagementMenu {
     }
     
     private void modifyIcon() {
-        System.out.print("Enter icon name to modify: ");
-        String name = scanner.nextLine().trim();
-        
-        if (name.isEmpty()) {
-            System.out.println("Icon name cannot be empty!");
-            return;
-        }
-        
         try {
-            var iconOpt = iconService.findIconByName(name);
-            if (iconOpt.isEmpty()) {
-                System.out.println("Icon not found!");
+            var icons = iconService.getAllIcons();
+            if (icons.isEmpty()) {
+                System.out.println("No icons found. Please create an icon first.");
                 return;
             }
             
-            var icon = iconOpt.get();
-            System.out.println("Current name: " + icon.getName());
-            System.out.println("Current image path: " + icon.getImagePath());
-            
-            System.out.print("Enter new name (or press Enter to keep current): ");
-            String newName = scanner.nextLine().trim();
-            
-            System.out.print("Enter new image path (or press Enter to keep current): ");
-            String newImagePath = scanner.nextLine().trim();
-            
-            if (!newName.isEmpty()) {
-                icon.setName(newName);
+            System.out.println("\n=== Select Icon to Modify ===");
+            for (int i = 0; i < icons.size(); i++) {
+                System.out.println((i + 1) + ". " + icons.get(i).getName());
             }
-            if (!newImagePath.isEmpty()) {
-                icon.setImagePath(newImagePath);
+            System.out.println((icons.size() + 1) + ". Cancel");
+            System.out.print("Select icon (1-" + (icons.size() + 1) + "): ");
+            
+            int choice = Integer.parseInt(scanner.nextLine());
+            
+            if (choice == icons.size() + 1) {
+                return;
             }
             
-            var updatedIcon = iconService.updateIcon(icon.getId(), icon.getName(), icon.getImagePath());
-            System.out.println("Icon updated successfully!");
+            if (choice >= 1 && choice <= icons.size()) {
+                var icon = icons.get(choice - 1);
+                System.out.println("Current name: " + icon.getName());
+                System.out.println("Current image path: " + icon.getImagePath());
+                
+                System.out.print("Enter new name (leave blank to keep '" + icon.getName() + "'): ");
+                String newName = scanner.nextLine().trim();
+                
+                System.out.print("Enter new image path (leave blank to keep '" + icon.getImagePath() + "'): ");
+                String newImagePath = scanner.nextLine().trim();
+                
+                String finalName = newName.isEmpty() ? icon.getName() : newName;
+                String finalPath = newImagePath.isEmpty() ? icon.getImagePath() : newImagePath;
+                
+                iconService.updateIcon(icon.getId(), finalName, finalPath);
+                System.out.println("Icon updated successfully!");
+            } else {
+                System.out.println("Invalid selection.");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Please enter a valid number.");
         } catch (Exception e) {
             System.out.println("Error updating icon: " + e.getMessage());
         }
     }
     
     private void deleteIcon() {
-        System.out.print("Enter icon name to delete: ");
-        String name = scanner.nextLine().trim();
-        
-        if (name.isEmpty()) {
-            System.out.println("Icon name cannot be empty!");
-            return;
-        }
-        
         try {
-            var iconOpt = iconService.findIconByName(name);
-            if (iconOpt.isEmpty()) {
-                System.out.println("Icon not found!");
+            var icons = iconService.getAllIcons();
+            if (icons.isEmpty()) {
+                System.out.println("No icons found. Please create an icon first.");
                 return;
             }
             
-            iconService.deleteIcon(iconOpt.get().getId());
-            System.out.println("Icon deleted successfully!");
+            System.out.println("\n=== Select Icon to Delete ===");
+            for (int i = 0; i < icons.size(); i++) {
+                System.out.println((i + 1) + ". " + icons.get(i).getName());
+            }
+            System.out.println((icons.size() + 1) + ". Cancel");
+            System.out.print("Select icon (1-" + (icons.size() + 1) + "): ");
+            
+            int choice = Integer.parseInt(scanner.nextLine());
+            
+            if (choice == icons.size() + 1) {
+                return;
+            }
+            
+            if (choice >= 1 && choice <= icons.size()) {
+                var icon = icons.get(choice - 1);
+                iconService.deleteIcon(icon.getId());
+                System.out.println("Icon deleted successfully!");
+            } else {
+                System.out.println("Invalid selection.");
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Please enter a valid number.");
         } catch (Exception e) {
             System.out.println("Error deleting icon: " + e.getMessage());
         }

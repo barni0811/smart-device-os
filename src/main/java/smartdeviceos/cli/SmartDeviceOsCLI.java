@@ -4,6 +4,7 @@ import smartdeviceos.service.UserService;
 import smartdeviceos.service.DeviceService;
 import smartdeviceos.service.AppService;
 import smartdeviceos.service.MenuService;
+import smartdeviceos.service.CustomizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -24,6 +25,9 @@ public class SmartDeviceOsCLI implements CommandLineRunner {
     
     @Autowired
     private MenuService menuService;
+    
+    @Autowired
+    private CustomizationService customizationService;
     
     @Autowired
     private UserManagementMenu userManagementMenu;
@@ -51,26 +55,36 @@ public class SmartDeviceOsCLI implements CommandLineRunner {
             var currentUser = userService.createCurrentUser();
             currentUserId = currentUser.getId();
             
-            deviceService.createDevice(currentUserId, "default_device");
+            // Create or update default wallpaper and theme (marked as default for new devices)
+            var wallpaperOpt = customizationService.findWallpaperByName("default_wallpaper");
+            if (wallpaperOpt.isPresent()) {
+                customizationService.setWallpaperAsDefault(wallpaperOpt.get().getId());
+            } else {
+                customizationService.addDefaultWallpaper("default_wallpaper", "images/default_wallpaper.png");
+            }
+            
+            var themeOpt = customizationService.findThemeByName("light_theme");
+            if (themeOpt.isPresent()) {
+                customizationService.setThemeAsDefault(themeOpt.get().getId());
+            } else {
+                customizationService.addDefaultTheme("light_theme", "#FFFFFF", "#000000", "Arial");
+            }
             
             // Automatically create default iPhone apps for the default user and device
-            System.out.println("Creating default iPhone applications...");
             appService.createDefaultIPhoneApps();
-            System.out.println("Default iPhone apps created successfully!");
+            
+            // Create default device (will automatically get default wallpaper and theme)
+            deviceService.createDevice(currentUserId, "default_device");
             
             // Create default menu for the device
-            System.out.println("Creating default menu...");
-            var deviceOpt = deviceService.findDeviceByNameAndUserId("default_device", currentUserId);
-            if (deviceOpt.isPresent()) {
-                var menu = menuService.createMainMenu(deviceOpt.get().getId(), "default_menu");
-                System.out.println("Default menu created successfully!");
+            var deviceOptForMenu = deviceService.findDeviceByNameAndUserId("default_device", currentUserId);
+            if (deviceOptForMenu.isPresent()) {
+                var menu = menuService.createMainMenu(deviceOptForMenu.get().getId(), "default_menu");
                 
                 // Create default submenu inside the menu
-                System.out.println("Creating default submenu...");
                 var submenu = menuService.createSubmenu(menu.getId(), "default_submenu");
                 // Add submenu as a menu item to the parent menu
                 menuService.addSubmenuToMenu(menu.getId(), submenu.getId(), "default_submenu", 1);
-                System.out.println("Default submenu created successfully!");
             }
         } catch (Exception e) {
             System.out.println("Error setting up current user: " + e.getMessage());

@@ -44,6 +44,20 @@ public class CustomizationService {
         return wallpaperRepository.save(wallpaper);
     }
     
+    public Wallpaper addDefaultWallpaper(String name, String imagePath) {
+        if (wallpaperRepository.existsByName(name)) {
+            throw new IllegalArgumentException("Wallpaper with name '" + name + "' already exists");
+        }
+        
+        Wallpaper wallpaper = new Wallpaper();
+        wallpaper.setId(UUID.randomUUID().toString());
+        wallpaper.setName(name);
+        wallpaper.setImagePath(imagePath);
+        wallpaper.setIsDefault(true);
+        
+        return wallpaperRepository.save(wallpaper);
+    }
+    
     public void selectWallpaper(String deviceId, String wallpaperId) {
         Optional<Device> deviceOpt = deviceRepository.findById(deviceId);
         Optional<Wallpaper> wallpaperOpt = wallpaperRepository.findById(wallpaperId);
@@ -83,6 +97,44 @@ public class CustomizationService {
         theme.setIsDefault(false);
         
         return themeRepository.save(theme);
+    }
+    
+    public Theme addDefaultTheme(String name, String primaryColor, String secondaryColor, String fontFamily) {
+        if (themeRepository.existsByName(name)) {
+            throw new IllegalArgumentException("Theme with name '" + name + "' already exists");
+        }
+        
+        Theme theme = new Theme();
+        theme.setId(UUID.randomUUID().toString());
+        theme.setName(name);
+        theme.setPrimaryColor(primaryColor);
+        theme.setSecondaryColor(secondaryColor);
+        theme.setFontFamily(fontFamily);
+        theme.setIsDefault(true);
+        
+        return themeRepository.save(theme);
+    }
+    
+    public void setWallpaperAsDefault(String wallpaperId) {
+        Optional<Wallpaper> wallpaperOpt = wallpaperRepository.findById(wallpaperId);
+        if (wallpaperOpt.isEmpty()) {
+            throw new IllegalArgumentException("Wallpaper not found with ID: " + wallpaperId);
+        }
+        
+        Wallpaper wallpaper = wallpaperOpt.get();
+        wallpaper.setIsDefault(true);
+        wallpaperRepository.save(wallpaper);
+    }
+    
+    public void setThemeAsDefault(String themeId) {
+        Optional<Theme> themeOpt = themeRepository.findById(themeId);
+        if (themeOpt.isEmpty()) {
+            throw new IllegalArgumentException("Theme not found with ID: " + themeId);
+        }
+        
+        Theme theme = themeOpt.get();
+        theme.setIsDefault(true);
+        themeRepository.save(theme);
     }
     
     public void changeTheme(String deviceId, String themeId) {

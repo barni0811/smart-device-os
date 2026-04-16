@@ -2,6 +2,7 @@ package smartdeviceos.cli;
 
 import smartdeviceos.service.DeviceService;
 import smartdeviceos.service.UserService;
+import smartdeviceos.service.MenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -15,6 +16,9 @@ public class DeviceMenu {
     
     @Autowired
     private UserService userService;
+    
+    @Autowired
+    private MenuService menuService;
     
     @Autowired
     private MenuManagementMenu menuManagementMenu;
@@ -170,6 +174,15 @@ public class DeviceMenu {
                     
                     var device = deviceService.createDevice(selectedOwner.getId(), deviceName);
                     System.out.println("Device created successfully: " + device.getName() + " (Owner: " + selectedOwner.getName() + ")");
+                    
+                    // Create default menu and submenu for the device
+                    try {
+                        var menu = menuService.createMainMenu(device.getId(), "default_menu");
+                        var submenu = menuService.createSubmenu(menu.getId(), "default_submenu");
+                        menuService.addSubmenuToMenu(menu.getId(), submenu.getId(), "default_submenu", 1);
+                    } catch (Exception e) {
+                        System.out.println("Note: Could not create default menu for device: " + e.getMessage());
+                    }
                 } else {
                     System.out.println("Invalid selection.");
                 }

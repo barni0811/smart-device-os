@@ -89,7 +89,15 @@ public class MenuService {
         menuItem.setApp(appOpt.get());
         menuItem.setPosition(position);
         
-        return menuItemRepository.save(menuItem);
+        try {
+            return menuItemRepository.save(menuItem);
+        } catch (Exception e) {
+            if (e.getMessage() != null && e.getMessage().contains("Unique index") || 
+                e.getCause() != null && e.getCause().getMessage() != null && e.getCause().getMessage().contains("Unique index")) {
+                throw new IllegalArgumentException("This application is already in the menu!");
+            }
+            throw e;
+        }
     }
     
     public MenuItem addSubmenuToMenu(String parentMenuId, String submenuId, String itemName, int position) {
@@ -110,7 +118,15 @@ public class MenuService {
         menuItem.setSubmenu(submenuOpt.get());
         menuItem.setPosition(position);
         
-        return menuItemRepository.save(menuItem);
+        try {
+            return menuItemRepository.save(menuItem);
+        } catch (Exception e) {
+            if (e.getMessage() != null && e.getMessage().contains("Unique index") || 
+                e.getCause() != null && e.getCause().getMessage() != null && e.getCause().getMessage().contains("Unique index")) {
+                throw new IllegalArgumentException("This submenu is already in the menu!");
+            }
+            throw e;
+        }
     }
     
     public MenuItem addLeafItemToMenu(String menuId, String itemName, int position) {
@@ -174,6 +190,16 @@ public class MenuService {
     
     public List<MenuItem> getMenuItems(String menuId) {
         return menuItemRepository.findByMenuIdOrderByPosition(menuId);
+    }
+    
+    public MenuItem renameMenuItem(String menuItemId, String newName) {
+        Optional<MenuItem> menuItemOpt = menuItemRepository.findById(menuItemId);
+        if (menuItemOpt.isEmpty()) {
+            throw new IllegalArgumentException("Menu item not found with ID: " + menuItemId);
+        }
+        MenuItem menuItem = menuItemOpt.get();
+        menuItem.setName(newName);
+        return menuItemRepository.save(menuItem);
     }
     
     public List<Menu> getMenusByUserId(String userId) {
