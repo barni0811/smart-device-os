@@ -167,3 +167,63 @@ On application startup:
 2. Creates default device and menu
 3. Adds favorite applications
 4. Displays interactive menu for feature access
+
+## Fullstack Implementation
+
+**Task:** Add React + TailwindCSS web UI with REST API for fullstack developer position
+
+### Architecture
+
+**Backend (Spring Boot):**
+- REST API controllers for all entities (User, Menu, Device, Family, Wallpaper, Theme)
+- CORS configuration for React communication
+- Simulation endpoint to load dummy data
+
+**Frontend (React + TailwindCSS):**
+- React app in `frontend/` folder
+- TailwindCSS for styling
+- CRUD components for all entities
+- Simulation button on dashboard
+
+### Implementation Plan
+
+1. **REST API Controllers**
+   - UserController, MenuController, DeviceController, FamilyController, WallpaperController, ThemeController
+   - SimulationController for loading dummy data
+
+2. **Frontend Setup**
+   - Create React project in `frontend/` folder with TailwindCSS
+   - API client with Axios for backend communication
+
+3. **React Components**
+   - User management (list, form, detail)
+   - Menu management (list, form, menu item manager)
+   - Device management (list, form, detail)
+   - Family management (list, form, member manager)
+   - Customization (wallpapers, themes)
+   - Simulation button component
+
+4. **Dummy Data Simulation**
+   - 3 families with family members
+   - 5 users
+   - 3 devices per user
+   - 2 menus per device with submenus
+   - Default wallpapers and themes per device
+   - Default apps in menus
+
+### Running the Application
+
+**CLI Mode (existing):**
+```bash
+mvn spring-boot:run
+```
+
+**Web UI Mode:**
+```bash
+mvn spring-boot:run
+npm --prefix frontend run dev
+```
+
+Access at: `http://localhost:5173`
+
+**Note:** Both CLI and Web UI can be used simultaneously, sharing the same database.
