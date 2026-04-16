@@ -30,30 +30,24 @@ public class CustomizationService {
     }
     
     // Wallpaper Management
-    public Wallpaper addWallpaper(String name, String imagePath) {
-        if (wallpaperRepository.existsByName(name)) {
-            throw new IllegalArgumentException("Wallpaper with name '" + name + "' already exists");
-        }
-        
+    public Wallpaper addWallpaper(String deviceId, String name, String imagePath) {
         Wallpaper wallpaper = new Wallpaper();
         wallpaper.setId(UUID.randomUUID().toString());
         wallpaper.setName(name);
         wallpaper.setImagePath(imagePath);
         wallpaper.setIsDefault(false);
+        wallpaper.setDeviceId(deviceId);
         
         return wallpaperRepository.save(wallpaper);
     }
     
-    public Wallpaper addDefaultWallpaper(String name, String imagePath) {
-        if (wallpaperRepository.existsByName(name)) {
-            throw new IllegalArgumentException("Wallpaper with name '" + name + "' already exists");
-        }
-        
+    public Wallpaper addDefaultWallpaper(String deviceId, String name, String imagePath) {
         Wallpaper wallpaper = new Wallpaper();
         wallpaper.setId(UUID.randomUUID().toString());
         wallpaper.setName(name);
         wallpaper.setImagePath(imagePath);
         wallpaper.setIsDefault(true);
+        wallpaper.setDeviceId(deviceId);
         
         return wallpaperRepository.save(wallpaper);
     }
@@ -83,11 +77,7 @@ public class CustomizationService {
     }
     
     // Theme Management
-    public Theme addTheme(String name, String primaryColor, String secondaryColor, String fontFamily) {
-        if (themeRepository.existsByName(name)) {
-            throw new IllegalArgumentException("Theme with name '" + name + "' already exists");
-        }
-        
+    public Theme addTheme(String deviceId, String name, String primaryColor, String secondaryColor, String fontFamily) {
         Theme theme = new Theme();
         theme.setId(UUID.randomUUID().toString());
         theme.setName(name);
@@ -95,15 +85,12 @@ public class CustomizationService {
         theme.setSecondaryColor(secondaryColor);
         theme.setFontFamily(fontFamily);
         theme.setIsDefault(false);
+        theme.setDeviceId(deviceId);
         
         return themeRepository.save(theme);
     }
     
-    public Theme addDefaultTheme(String name, String primaryColor, String secondaryColor, String fontFamily) {
-        if (themeRepository.existsByName(name)) {
-            throw new IllegalArgumentException("Theme with name '" + name + "' already exists");
-        }
-        
+    public Theme addDefaultTheme(String deviceId, String name, String primaryColor, String secondaryColor, String fontFamily) {
         Theme theme = new Theme();
         theme.setId(UUID.randomUUID().toString());
         theme.setName(name);
@@ -111,6 +98,7 @@ public class CustomizationService {
         theme.setSecondaryColor(secondaryColor);
         theme.setFontFamily(fontFamily);
         theme.setIsDefault(true);
+        theme.setDeviceId(deviceId);
         
         return themeRepository.save(theme);
     }
@@ -166,6 +154,14 @@ public class CustomizationService {
         return wallpaperRepository.findById(wallpaperId);
     }
     
+    public List<Wallpaper> getWallpapersByDeviceId(String deviceId) {
+        return wallpaperRepository.findByDeviceIdOrderByName(deviceId);
+    }
+    
+    public Optional<Wallpaper> getDefaultWallpaperByDeviceId(String deviceId) {
+        return wallpaperRepository.findByDeviceIdAndIsDefaultTrue(deviceId);
+    }
+    
     public Optional<Wallpaper> findWallpaperByName(String name) {
         return wallpaperRepository.findByName(name);
     }
@@ -180,6 +176,14 @@ public class CustomizationService {
     
     public Optional<Theme> findThemeById(String themeId) {
         return themeRepository.findById(themeId);
+    }
+    
+    public List<Theme> getThemesByDeviceId(String deviceId) {
+        return themeRepository.findByDeviceIdOrderByName(deviceId);
+    }
+    
+    public Optional<Theme> getDefaultThemeByDeviceId(String deviceId) {
+        return themeRepository.findByDeviceIdAndIsDefaultTrue(deviceId);
     }
     
     public Optional<Theme> findThemeByName(String name) {

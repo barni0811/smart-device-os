@@ -26,6 +26,9 @@ public class Wallpaper {
     @Column(name = "is_default")
     private Boolean isDefault = false;
 
+    @Column(name = "device_id")
+    private String deviceId;
+
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
@@ -81,6 +84,14 @@ public class Wallpaper {
 
     public void setIsDefault(Boolean isDefault) {
         this.isDefault = isDefault;
+    }
+
+    public String getDeviceId() {
+        return deviceId;
+    }
+
+    public void setDeviceId(String deviceId) {
+        this.deviceId = deviceId;
     }
 
     public LocalDateTime getCreatedAt() {

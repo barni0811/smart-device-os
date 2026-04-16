@@ -3,6 +3,7 @@ package smartdeviceos.cli;
 import smartdeviceos.service.DeviceService;
 import smartdeviceos.service.UserService;
 import smartdeviceos.service.MenuService;
+import smartdeviceos.service.CustomizationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +20,9 @@ public class DeviceMenu {
     
     @Autowired
     private MenuService menuService;
+    
+    @Autowired
+    private CustomizationService customizationService;
     
     @Autowired
     private MenuManagementMenu menuManagementMenu;
@@ -174,6 +178,16 @@ public class DeviceMenu {
                     
                     var device = deviceService.createDevice(selectedOwner.getId(), deviceName);
                     System.out.println("Device created successfully: " + device.getName() + " (Owner: " + selectedOwner.getName() + ")");
+                    
+                    // Create default wallpaper and theme for the device
+                    try {
+                        var defaultWallpaper = customizationService.addDefaultWallpaper(device.getId(), "default_wallpaper", "images/default_wallpaper.png");
+                        var defaultTheme = customizationService.addDefaultTheme(device.getId(), "light_theme", "#FFFFFF", "#000000", "Arial");
+                        customizationService.selectWallpaper(device.getId(), defaultWallpaper.getId());
+                        customizationService.changeTheme(device.getId(), defaultTheme.getId());
+                    } catch (Exception e) {
+                        System.out.println("Note: Could not create default wallpaper/theme for device: " + e.getMessage());
+                    }
                     
                     // Create default menu and submenu for the device
                     try {

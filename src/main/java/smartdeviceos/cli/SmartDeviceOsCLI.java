@@ -55,28 +55,16 @@ public class SmartDeviceOsCLI implements CommandLineRunner {
             var currentUser = userService.createCurrentUser();
             currentUserId = currentUser.getId();
             
-            // Create or update default wallpaper and theme (marked as default for new devices)
-            var wallpaperOpt = customizationService.findWallpaperByName("default_wallpaper");
-            if (wallpaperOpt.isPresent()) {
-                customizationService.setWallpaperAsDefault(wallpaperOpt.get().getId());
-            } else {
-                customizationService.addDefaultWallpaper("default_wallpaper", "images/default_wallpaper.png");
-            }
-            
-            var themeOpt = customizationService.findThemeByName("light_theme");
-            if (themeOpt.isPresent()) {
-                customizationService.setThemeAsDefault(themeOpt.get().getId());
-            } else {
-                customizationService.addDefaultTheme("light_theme", "#FFFFFF", "#000000", "Arial");
-            }
-            
             // Automatically create default iPhone apps for the default user and device
             appService.createDefaultIPhoneApps();
             
-            // Create default device (will automatically get default wallpaper and theme)
-            deviceService.createDevice(currentUserId, "default_device");
+            var defaultDevice = deviceService.createDevice(currentUserId, "default_device");
+            var defaultWallpaper = customizationService.addDefaultWallpaper(defaultDevice.getId(), "default_wallpaper", "images/default_wallpaper.png");
+            var defaultTheme = customizationService.addDefaultTheme(defaultDevice.getId(), "light_theme", "#FFFFFF", "#000000", "Arial");
             
-            // Create default menu for the device
+            customizationService.selectWallpaper(defaultDevice.getId(), defaultWallpaper.getId());
+            customizationService.changeTheme(defaultDevice.getId(), defaultTheme.getId());
+            
             var deviceOptForMenu = deviceService.findDeviceByNameAndUserId("default_device", currentUserId);
             if (deviceOptForMenu.isPresent()) {
                 var menu = menuService.createMainMenu(deviceOptForMenu.get().getId(), "default_menu");

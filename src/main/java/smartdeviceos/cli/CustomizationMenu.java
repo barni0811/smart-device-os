@@ -74,7 +74,7 @@ public class CustomizationMenu {
         }
         
         try {
-            var wallpaper = customizationService.addWallpaper(name, imagePath);
+            var wallpaper = customizationService.addWallpaper(currentDeviceId, name, imagePath);
             System.out.println("Wallpaper added successfully: " + wallpaper.getName());
         } catch (Exception e) {
             System.out.println("Error adding wallpaper: " + e.getMessage());
@@ -83,14 +83,14 @@ public class CustomizationMenu {
     
     private void selectWallpaper() {
         try {
-            var wallpapers = customizationService.getAllWallpapers();
-            if (wallpapers.isEmpty()) {
-                System.out.println("No wallpapers found. Please create a wallpaper first.");
+            if (currentDeviceId == null) {
+                System.out.println("No device currently selected!");
                 return;
             }
             
-            if (currentDeviceId == null) {
-                System.out.println("No device currently selected!");
+            var wallpapers = customizationService.getWallpapersByDeviceId(currentDeviceId);
+            if (wallpapers.isEmpty()) {
+                System.out.println("No wallpapers found for this device. Please create a wallpaper first.");
                 return;
             }
             
@@ -131,13 +131,16 @@ public class CustomizationMenu {
         System.out.print("Enter secondary color: ");
         String secondaryColor = scanner.nextLine().trim();
         
-        if (name.isEmpty() || primaryColor.isEmpty() || secondaryColor.isEmpty()) {
-            System.out.println("Theme name and colors are required!");
+        System.out.print("Enter font family: ");
+        String fontFamily = scanner.nextLine().trim();
+        
+        if (name.isEmpty() || primaryColor.isEmpty() || secondaryColor.isEmpty() || fontFamily.isEmpty()) {
+            System.out.println("Theme name, colors and font family are required!");
             return;
         }
         
         try {
-            var theme = customizationService.addTheme(name, primaryColor, secondaryColor, "Arial");
+            var theme = customizationService.addTheme(currentDeviceId, name, primaryColor, secondaryColor, fontFamily);
             System.out.println("Theme added successfully: " + theme.getName());
         } catch (Exception e) {
             System.out.println("Error adding theme: " + e.getMessage());
@@ -146,14 +149,14 @@ public class CustomizationMenu {
     
     private void changeTheme() {
         try {
-            var themes = customizationService.getAllThemes();
-            if (themes.isEmpty()) {
-                System.out.println("No themes found. Please create a theme first.");
+            if (currentDeviceId == null) {
+                System.out.println("No device currently selected!");
                 return;
             }
             
-            if (currentDeviceId == null) {
-                System.out.println("No device currently selected!");
+            var themes = customizationService.getThemesByDeviceId(currentDeviceId);
+            if (themes.isEmpty()) {
+                System.out.println("No themes found for this device. Please create a theme first.");
                 return;
             }
             
@@ -186,23 +189,22 @@ public class CustomizationMenu {
     
     private void listWallpapers() {
         try {
-            var wallpapers = customizationService.getAllWallpapers();
+            if (currentDeviceId == null) {
+                System.out.println("No device currently selected!");
+                return;
+            }
+            
+            var wallpapers = customizationService.getWallpapersByDeviceId(currentDeviceId);
             System.out.println("\n=== All Wallpapers ===");
             if (wallpapers.isEmpty()) {
-                System.out.println("No wallpapers found.");
+                System.out.println("No wallpapers found for this device.");
             } else {
-                // Get current device's wallpaper to show [active] tag
-                String activeWallpaperId = null;
-                if (currentDeviceId != null) {
-                    var deviceOpt = deviceService.findDeviceById(currentDeviceId);
-                    if (deviceOpt.isPresent() && deviceOpt.get().getWallpaper() != null) {
-                        activeWallpaperId = deviceOpt.get().getWallpaper().getId();
-                    }
-                }
-                
+                var deviceOpt = deviceService.findDeviceById(currentDeviceId);
                 for (var wallpaper : wallpapers) {
-                    String activeTag = (activeWallpaperId != null && activeWallpaperId.equals(wallpaper.getId())) ? " [active]" : "";
-                    System.out.println("Name: " + wallpaper.getName() + activeTag + ", Path: " + wallpaper.getImagePath());
+                    String activeTag = (deviceOpt.isPresent() && 
+                        deviceOpt.get().getWallpaper() != null && 
+                        deviceOpt.get().getWallpaper().getId().equals(wallpaper.getId())) ? " [active]" : "";
+                    System.out.println("Name: " + wallpaper.getName() + ", Path: " + wallpaper.getImagePath() + activeTag);
                 }
             }
         } catch (Exception e) {
@@ -212,24 +214,22 @@ public class CustomizationMenu {
     
     private void listThemes() {
         try {
-            var themes = customizationService.getAllThemes();
+            if (currentDeviceId == null) {
+                System.out.println("No device currently selected!");
+                return;
+            }
+            
+            var themes = customizationService.getThemesByDeviceId(currentDeviceId);
             System.out.println("\n=== All Themes ===");
             if (themes.isEmpty()) {
-                System.out.println("No themes found.");
+                System.out.println("No themes found for this device.");
             } else {
-                // Get current device's theme to show [active] tag
-                String activeThemeId = null;
-                if (currentDeviceId != null) {
-                    var deviceOpt = deviceService.findDeviceById(currentDeviceId);
-                    if (deviceOpt.isPresent() && deviceOpt.get().getTheme() != null) {
-                        activeThemeId = deviceOpt.get().getTheme().getId();
-                    }
-                }
-                
+                var deviceOpt = deviceService.findDeviceById(currentDeviceId);
                 for (var theme : themes) {
-                    String activeTag = (activeThemeId != null && activeThemeId.equals(theme.getId())) ? " [active]" : "";
-                    System.out.println("Name: " + theme.getName() + activeTag + 
-                        ", Primary: " + theme.getPrimaryColor() + ", Secondary: " + theme.getSecondaryColor());
+                    String activeTag = (deviceOpt.isPresent() && 
+                        deviceOpt.get().getTheme() != null && 
+                        deviceOpt.get().getTheme().getId().equals(theme.getId())) ? " [active]" : "";
+                    System.out.println("Name: " + theme.getName() + ", Primary: " + theme.getPrimaryColor() + ", Secondary: " + theme.getSecondaryColor() + activeTag);
                 }
             }
         } catch (Exception e) {

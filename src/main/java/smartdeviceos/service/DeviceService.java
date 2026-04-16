@@ -2,12 +2,8 @@ package smartdeviceos.service;
 
 import smartdeviceos.entity.Device;
 import smartdeviceos.entity.User;
-import smartdeviceos.entity.Wallpaper;
-import smartdeviceos.entity.Theme;
 import smartdeviceos.repository.UserRepository;
 import smartdeviceos.repository.DeviceRepository;
-import smartdeviceos.repository.WallpaperRepository;
-import smartdeviceos.repository.ThemeRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,17 +16,11 @@ import java.util.UUID;
 public class DeviceService {
     
     private final DeviceRepository deviceRepository;
-    private final WallpaperRepository wallpaperRepository;
-    private final ThemeRepository themeRepository;
     private final UserRepository userRepository;
     
     public DeviceService(DeviceRepository deviceRepository, 
-                        WallpaperRepository wallpaperRepository,
-                        ThemeRepository themeRepository,
                         UserRepository userRepository) {
         this.deviceRepository = deviceRepository;
-        this.wallpaperRepository = wallpaperRepository;
-        this.themeRepository = themeRepository;
         this.userRepository = userRepository;
     }
     
@@ -43,9 +33,6 @@ public class DeviceService {
         // Find and set the user
         Optional<User> userOpt = userRepository.findById(userId);
         userOpt.ifPresent(device::setUser);
-        
-        wallpaperRepository.findByIsDefaultTrue().ifPresent(device::setWallpaper);
-        themeRepository.findByIsDefaultTrue().ifPresent(device::setTheme);
         
         return deviceRepository.save(device);
     }

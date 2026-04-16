@@ -20,6 +20,13 @@ public interface ThemeRepository extends JpaRepository<Theme, String> {
     
     Optional<Theme> findByIsDefaultTrue();
     
+    List<Theme> findByDeviceId(String deviceId);
+    
+    Optional<Theme> findByDeviceIdAndIsDefaultTrue(String deviceId);
+    
+    @Query("SELECT t FROM Theme t WHERE t.deviceId = :deviceId ORDER BY t.name")
+    List<Theme> findByDeviceIdOrderByName(@Param("deviceId") String deviceId);
+    
     @Query("SELECT t FROM Theme t ORDER BY t.name")
     List<Theme> findAllOrderByName();
     

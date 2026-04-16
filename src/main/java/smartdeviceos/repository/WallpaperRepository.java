@@ -20,6 +20,13 @@ public interface WallpaperRepository extends JpaRepository<Wallpaper, String> {
     
     Optional<Wallpaper> findByIsDefaultTrue();
     
+    List<Wallpaper> findByDeviceId(String deviceId);
+    
+    Optional<Wallpaper> findByDeviceIdAndIsDefaultTrue(String deviceId);
+    
+    @Query("SELECT w FROM Wallpaper w WHERE w.deviceId = :deviceId ORDER BY w.name")
+    List<Wallpaper> findByDeviceIdOrderByName(@Param("deviceId") String deviceId);
+    
     @Query("SELECT w FROM Wallpaper w ORDER BY w.name")
     List<Wallpaper> findAllOrderByName();
     
