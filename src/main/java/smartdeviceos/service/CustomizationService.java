@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -72,10 +74,22 @@ public class CustomizationService {
         if (!wallpaperRepository.existsById(wallpaperId)) {
             throw new IllegalArgumentException("Wallpaper not found with ID: " + wallpaperId);
         }
-        
+
         wallpaperRepository.deleteById(wallpaperId);
     }
-    
+
+    public Wallpaper updateWallpaper(String wallpaperId, String name, String imagePath) {
+        Optional<Wallpaper> wallpaperOpt = wallpaperRepository.findById(wallpaperId);
+        if (wallpaperOpt.isEmpty()) {
+            throw new IllegalArgumentException("Wallpaper not found with ID: " + wallpaperId);
+        }
+
+        Wallpaper wallpaper = wallpaperOpt.get();
+        wallpaper.setName(name);
+        wallpaper.setImagePath(imagePath);
+        return wallpaperRepository.save(wallpaper);
+    }
+
     // Theme Management
     public Theme addTheme(String deviceId, String name, String primaryColor, String secondaryColor, String fontFamily) {
         Theme theme = new Theme();
@@ -145,10 +159,24 @@ public class CustomizationService {
         if (!themeRepository.existsById(themeId)) {
             throw new IllegalArgumentException("Theme not found with ID: " + themeId);
         }
-        
+
         themeRepository.deleteById(themeId);
     }
-    
+
+    public Theme updateTheme(String themeId, String name, String primaryColor, String secondaryColor, String fontFamily) {
+        Optional<Theme> themeOpt = themeRepository.findById(themeId);
+        if (themeOpt.isEmpty()) {
+            throw new IllegalArgumentException("Theme not found with ID: " + themeId);
+        }
+
+        Theme theme = themeOpt.get();
+        theme.setName(name);
+        theme.setPrimaryColor(primaryColor);
+        theme.setSecondaryColor(secondaryColor);
+        theme.setFontFamily(fontFamily);
+        return themeRepository.save(theme);
+    }
+
     // Query Methods
     public Optional<Wallpaper> findWallpaperById(String wallpaperId) {
         return wallpaperRepository.findById(wallpaperId);
@@ -204,5 +232,36 @@ public class CustomizationService {
     
     public List<Theme> getDefaultThemes() {
         return themeRepository.findByIsDefault(true);
+    }
+
+    // Cleanup methods to remove duplicate wallpapers/themes by name per device
+    public void cleanupDuplicateWallpapers() {
+        List<Wallpaper> allWallpapers = wallpaperRepository.findAll();
+        Map<String, Wallpaper> uniqueWallpapers = new java.util.HashMap<>();
+        
+        for (Wallpaper wallpaper : allWallpapers) {
+            String key = wallpaper.getDeviceId() + "_" + wallpaper.getName();
+            if (!uniqueWallpapers.containsKey(key)) {
+                uniqueWallpapers.put(key, wallpaper);
+            } else {
+                // Delete duplicate
+                wallpaperRepository.delete(wallpaper);
+            }
+        }
+    }
+
+    public void cleanupDuplicateThemes() {
+        List<Theme> allThemes = themeRepository.findAll();
+        Map<String, Theme> uniqueThemes = new java.util.HashMap<>();
+        
+        for (Theme theme : allThemes) {
+            String key = theme.getDeviceId() + "_" + theme.getName();
+            if (!uniqueThemes.containsKey(key)) {
+                uniqueThemes.put(key, theme);
+            } else {
+                // Delete duplicate
+                themeRepository.delete(theme);
+            }
+        }
     }
 }

@@ -1,5 +1,6 @@
 package smartdeviceos.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -15,11 +16,13 @@ public class DeviceApp {
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("deviceId")
     @JoinColumn(name = "device_id", nullable = false)
+    @JsonIgnore
     private Device device;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("appId")
     @JoinColumn(name = "app_id", nullable = false)
+    @JsonIgnore
     private App app;
 
     @CreationTimestamp

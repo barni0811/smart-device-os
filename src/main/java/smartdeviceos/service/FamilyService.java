@@ -112,12 +112,28 @@ public class FamilyService {
         familyRepository.deleteById(familyId);
     }
     
+    public List<Family> getAllFamilies() {
+        return familyRepository.findAll();
+    }
+    
     public Optional<Family> findFamilyById(String familyId) {
         return familyRepository.findById(familyId);
     }
     
     public Optional<Family> findFamilyByName(String name) {
         return familyRepository.findByName(name);
+    }
+    
+    public Family updateFamily(String familyId, String newName) {
+        Optional<Family> familyOpt = familyRepository.findById(familyId);
+        if (familyOpt.isEmpty()) {
+            throw new IllegalArgumentException("Family not found with ID: " + familyId);
+        }
+        
+        Family family = familyOpt.get();
+        family.setName(newName);
+        
+        return familyRepository.save(family);
     }
     
     public List<Family> getFamiliesOwnedByUser(String userId) {

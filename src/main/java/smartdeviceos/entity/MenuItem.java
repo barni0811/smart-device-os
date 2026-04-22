@@ -1,5 +1,7 @@
 package smartdeviceos.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.annotations.CreationTimestamp;
@@ -24,18 +26,22 @@ public class MenuItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "app_id")
+    @JsonIgnore
     private App app;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "icon_id")
+    @JsonIgnore
     private Icon icon;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "submenu_id")
+    @JsonIgnore
     private Menu submenu;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "menu_id", nullable = false)
+    @JsonIgnore
     private Menu menu;
 
     @Column(name = "position")
@@ -44,6 +50,20 @@ public class MenuItem {
     @CreationTimestamp
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
+
+    @Transient
+    @JsonProperty("type")
+    public String getType() {
+        if (submenu != null) return "submenu";
+        if (app != null) return "app";
+        return "file";
+    }
+
+    @Transient
+    @JsonProperty("appName")
+    public String getAppName() {
+        return app != null ? app.getName() : null;
+    }
 
     public MenuItem() {}
 

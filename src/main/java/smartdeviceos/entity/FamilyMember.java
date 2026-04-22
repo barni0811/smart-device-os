@@ -1,5 +1,7 @@
 package smartdeviceos.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.annotations.CreationTimestamp;
@@ -8,6 +10,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "family_members")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class FamilyMember {
 
     @EmbeddedId
@@ -16,6 +19,7 @@ public class FamilyMember {
     @ManyToOne(fetch = FetchType.LAZY)
     @MapsId("familyId")
     @JoinColumn(name = "family_id", nullable = false)
+    @JsonIgnore
     private Family family;
 
     @ManyToOne(fetch = FetchType.EAGER)

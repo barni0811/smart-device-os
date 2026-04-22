@@ -1,5 +1,7 @@
 package smartdeviceos.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.annotations.CreationTimestamp;
@@ -9,6 +11,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "families")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Family {
 
     @Id
@@ -28,6 +31,7 @@ public class Family {
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "family", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<FamilyMember> members;
 
     public Family() {}

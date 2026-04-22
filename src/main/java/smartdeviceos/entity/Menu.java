@@ -1,5 +1,6 @@
 package smartdeviceos.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.annotations.CreationTimestamp;
@@ -19,8 +20,9 @@ public class Menu {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "device_id", nullable = false)
+    @JsonIgnore
     private Device device;
 
     @Column(name = "is_default")
@@ -31,9 +33,11 @@ public class Menu {
     private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "menu", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<MenuItem> menuItems;
 
     @OneToMany(mappedBy = "submenu")
+    @JsonIgnore
     private List<MenuItem> parentMenuItems;
 
     public Menu() {}

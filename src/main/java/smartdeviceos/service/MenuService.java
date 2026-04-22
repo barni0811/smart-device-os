@@ -148,12 +148,20 @@ public class MenuService {
         menuItemRepository.deleteById(menuItemId);
     }
     
+    public List<Menu> getAllMenus() {
+        return menuRepository.findAll();
+    }
+    
     public Optional<Menu> findMenuById(String menuId) {
         return menuRepository.findById(menuId);
     }
     
     public Optional<Menu> findMenuByDeviceId(String deviceId) {
         return menuRepository.findByDeviceId(deviceId);
+    }
+    
+    public void deleteMenu(String menuId) {
+        menuRepository.deleteById(menuId);
     }
     
     public List<Menu> getMenusByDeviceId(String deviceId) {

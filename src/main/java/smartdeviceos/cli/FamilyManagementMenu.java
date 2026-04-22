@@ -141,20 +141,20 @@ public class FamilyManagementMenu {
     
     private void listFamiliesWithMembers() {
         try {
-            var families = familyService.getFamiliesOwnedByUser(currentUserId);
-            System.out.println("\n=== Your Families with Members ===");
+            var families = familyService.getAllFamilies();
+            System.out.println("\n=== All Families with Members ===");
             if (families.isEmpty()) {
                 System.out.println("No families found.");
             } else {
                 families.forEach(family -> {
                     System.out.println("Family: " + family.getName() + " (Owner: " + family.getOwner().getName() + ")");
-                    
+
                     var members = familyService.getFamilyMembers(family.getId());
                     if (members.isEmpty()) {
                         System.out.println("  Members: None");
                     } else {
                         System.out.println("  Members:");
-                        members.forEach(member -> 
+                        members.forEach(member ->
                             System.out.println("    - " + member.getUser().getName() + " (Role: " + member.getRole() + ")")
                         );
                     }

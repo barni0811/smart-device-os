@@ -1,5 +1,7 @@
 package smartdeviceos.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.annotations.CreationTimestamp;
@@ -9,6 +11,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "themes")
+@JsonIgnoreProperties({"devices"})
 public class Theme {
 
     @Id
@@ -40,6 +43,7 @@ public class Theme {
 
     // One-to-many relationships
     @OneToMany(mappedBy = "theme", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Device> devices;
 
     // Constructors

@@ -1,5 +1,6 @@
 package smartdeviceos.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.annotations.CreationTimestamp;
@@ -20,15 +21,16 @@ public class Device {
     @Column(name = "name", nullable = false)
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "wallpaper_id")
     private Wallpaper wallpaper;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "theme_id")
     private Theme theme;
 
@@ -44,9 +46,11 @@ public class Device {
     private LocalDateTime updatedAt;
 
     @OneToMany(mappedBy = "device", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Menu> menus;
 
     @OneToMany(mappedBy = "device", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<DeviceApp> deviceApps;
 
     public Device() {}
