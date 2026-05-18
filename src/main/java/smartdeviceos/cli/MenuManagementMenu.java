@@ -1,39 +1,38 @@
 package smartdeviceos.cli;
 
-import smartdeviceos.entity.Menu;
-import smartdeviceos.entity.User;
-import smartdeviceos.service.MenuService;
-import smartdeviceos.service.DeviceService;
-import smartdeviceos.service.AppService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import smartdeviceos.app.AppService;
+import smartdeviceos.device.DeviceService;
+import smartdeviceos.menu.Menu;
+import smartdeviceos.menu.MenuService;
 
 import java.util.Scanner;
 
 @Component
 public class MenuManagementMenu {
-    
+
     @Autowired
     private MenuService menuService;
-    
+
     @Autowired
     private DeviceService deviceService;
-    
+
     @Autowired
     private AppService appService;
-    
+
     private final Scanner scanner = new Scanner(System.in);
     private String currentUserId;
     private String currentDeviceId;
-    
+
     public void setUserId(String userId) {
         this.currentUserId = userId;
     }
-    
+
     public void setDeviceId(String deviceId) {
         this.currentDeviceId = deviceId;
     }
-    
+
     public void showMenu() {
         while (true) {
             System.out.println("\n=== Menu Management ===");
@@ -43,10 +42,10 @@ public class MenuManagementMenu {
             System.out.println("4. List Menus");
             System.out.println("5. Back to Main Menu");
             System.out.print("Select an option (1-5): ");
-            
+
             try {
                 int choice = Integer.parseInt(scanner.nextLine());
-                
+
                 switch (choice) {
                     case 1 -> selectMenuToManage();
                     case 2 -> createMenu();
@@ -62,28 +61,27 @@ public class MenuManagementMenu {
             }
         }
     }
-    
+
     private void selectMenuToManage() {
         if (currentDeviceId == null) {
             System.out.println("No device currently selected!");
             return;
         }
-        
+
         try {
-            // Get only main menus (not submenus)
             var menus = menuService.getMainMenusByDeviceId(currentDeviceId);
-            
+
             if (menus.isEmpty()) {
                 System.out.println("No menus found. Please create a menu first.");
                 return;
             }
-            
+
             System.out.println("\n=== Select Menu ===");
             for (int i = 0; i < menus.size(); i++) {
                 var menu = menus.get(i);
                 System.out.println((i + 1) + ". " + menu.getName());
             }
-            
+
             System.out.print("Select menu (1-" + menus.size() + "): ");
             try {
                 int choice = Integer.parseInt(scanner.nextLine());
@@ -100,21 +98,21 @@ public class MenuManagementMenu {
             System.out.println("Error selecting menu: " + e.getMessage());
         }
     }
-    
+
     private void createMenu() {
         if (currentDeviceId == null) {
             System.out.println("No device currently selected!");
             return;
         }
-        
+
         System.out.print("Enter menu name: ");
         String menuName = scanner.nextLine().trim();
-        
+
         if (menuName.isEmpty()) {
             System.out.println("Menu name cannot be empty!");
             return;
         }
-        
+
         try {
             var menu = menuService.createMainMenu(currentDeviceId, menuName);
             System.out.println("Menu created successfully: " + menu.getName());
@@ -122,13 +120,13 @@ public class MenuManagementMenu {
             System.out.println("Error creating menu: " + e.getMessage());
         }
     }
-    
+
     private void createDefaultMenuWithApps() {
         if (currentDeviceId == null) {
             System.out.println("No device currently selected!");
             return;
         }
-        
+
         try {
             System.out.println("Creating Default Family Menu with 20 family-friendly applications...");
             menuService.createDefaultMenuWithApps(currentDeviceId);
@@ -157,40 +155,40 @@ public class MenuManagementMenu {
             System.out.println("Error creating default menu with apps: " + e.getMessage());
         }
     }
-    
+
     private void modifyMenu() {
         if (currentDeviceId == null) {
             System.out.println("No device currently selected!");
             return;
         }
-        
+
         try {
             var menus = menuService.getMenusByDeviceId(currentDeviceId);
             if (menus.isEmpty()) {
                 System.out.println("No menus found. Please create a menu first.");
                 return;
             }
-            
+
             System.out.println("\n=== Select Menu to Modify ===");
             for (int i = 0; i < menus.size(); i++) {
                 var menu = menus.get(i);
                 System.out.println((i + 1) + ". " + menu.getName());
             }
-            
+
             System.out.print("Select menu (1-" + menus.size() + "): ");
             try {
                 int choice = Integer.parseInt(scanner.nextLine());
                 if (choice >= 1 && choice <= menus.size()) {
                     var selectedMenu = menus.get(choice - 1);
-                    
+
                     System.out.print("Enter new name for '" + selectedMenu.getName() + "': ");
                     String newName = scanner.nextLine().trim();
-                    
+
                     if (newName.isEmpty()) {
                         System.out.println("New name cannot be empty!");
                         return;
                     }
-                    
+
                     selectedMenu.setName(newName);
                     menuService.saveMenu(selectedMenu);
                     System.out.println("Menu updated successfully: " + newName);
@@ -204,17 +202,16 @@ public class MenuManagementMenu {
             System.out.println("Error modifying menu: " + e.getMessage());
         }
     }
-    
+
     private void showMenuManagement(Menu selectedMenu) {
         showMenuManagement(selectedMenu, false);
     }
-    
+
     private void showMenuManagement(Menu selectedMenu, boolean isSubmenu) {
         while (true) {
             String title = isSubmenu ? "Submenu Management" : "Menu Management";
             System.out.println("\n=== " + title + " ===");
             if (isSubmenu) {
-                // Submenu view - sequential numbering
                 System.out.println("1. List Submenu Items");
                 System.out.println("2. Add Application");
                 System.out.println("3. Add File");
@@ -224,7 +221,6 @@ public class MenuManagementMenu {
                 System.out.println("7. Back to Menu Management");
                 System.out.print("Select an option (1-7): ");
             } else {
-                // Main menu view
                 System.out.println("1. List Menu Items");
                 System.out.println("2. Open Submenu");
                 System.out.println("3. Add Application");
@@ -238,12 +234,11 @@ public class MenuManagementMenu {
                 System.out.println("11. Back to Menu Management");
                 System.out.print("Select an option (1-11): ");
             }
-            
+
             try {
                 int choice = Integer.parseInt(scanner.nextLine());
-                
+
                 if (isSubmenu) {
-                    // Submenu mapping
                     switch (choice) {
                         case 1 -> listMenuItems(selectedMenu);
                         case 2 -> addApplication(selectedMenu);
@@ -255,7 +250,6 @@ public class MenuManagementMenu {
                         default -> System.out.println("Invalid option. Please try again.");
                     }
                 } else {
-                    // Main menu mapping
                     switch (choice) {
                         case 1 -> listMenuItems(selectedMenu);
                         case 2 -> openSubmenu(selectedMenu);
@@ -278,30 +272,28 @@ public class MenuManagementMenu {
             }
         }
     }
-    
+
     private void addApplication(Menu selectedMenu) {
         try {
-            // Get all applications
             var apps = appService.getAllActiveApps();
             if (apps.isEmpty()) {
                 System.out.println("No applications found. Please create applications first.");
                 return;
             }
-            
+
             System.out.println("\n=== Select Application ===");
             for (int i = 0; i < apps.size(); i++) {
                 var app = apps.get(i);
                 System.out.println((i + 1) + ". " + app.getName());
             }
-            
+
             System.out.print("Select application (1-" + apps.size() + "): ");
             try {
                 int appChoice = Integer.parseInt(scanner.nextLine());
                 if (appChoice >= 1 && appChoice <= apps.size()) {
                     var selectedApp = apps.get(appChoice - 1);
-                    
+
                     try {
-                        // Use app name as item name automatically
                         var menuItem = menuService.addApplicationToMenu(selectedMenu.getId(), selectedApp.getId(), selectedApp.getName(), 1);
                         System.out.println("Application added to menu successfully!");
                     } catch (Exception e) {
@@ -341,7 +333,7 @@ public class MenuManagementMenu {
             }
         }
     }
-    
+
     private void listMenuItems(Menu selectedMenu) {
         try {
             var menuItems = menuService.getMenuItems(selectedMenu.getId());
@@ -349,7 +341,7 @@ public class MenuManagementMenu {
                 System.out.println("No items found in this menu.");
                 return;
             }
-            
+
             System.out.println("\n=== Menu Items ===");
             for (int i = 0; i < menuItems.size(); i++) {
                 var item = menuItems.get(i);
@@ -367,24 +359,21 @@ public class MenuManagementMenu {
             System.out.println("Error listing menu items: " + e.getMessage());
         }
     }
-    
+
     private void addSubmenu(Menu selectedMenu) {
         try {
             System.out.print("Enter submenu name: ");
             String submenuName = scanner.nextLine().trim();
-            
+
             if (submenuName.isEmpty()) {
                 System.out.println("Submenu name cannot be empty!");
                 return;
             }
-            
-            // Get current menu items to determine next position
+
             var menuItems = menuService.getMenuItems(selectedMenu.getId());
             int nextPosition = menuItems.size() + 1;
-            
-            // Create the submenu menu entity
+
             var submenu = menuService.createSubmenu(selectedMenu.getId(), submenuName);
-            // Add as menu item to link it to parent menu
             try {
                 menuService.addSubmenuToMenu(selectedMenu.getId(), submenu.getId(), submenuName, nextPosition);
                 System.out.println("Submenu created successfully: " + submenu.getName());
@@ -395,79 +384,74 @@ public class MenuManagementMenu {
             System.out.println("Error creating submenu: " + e.getMessage());
         }
     }
-    
+
     private void addFileToMenu(Menu selectedMenu) {
         try {
             System.out.print("Enter file name: ");
             String fileName = scanner.nextLine().trim();
-            
+
             if (fileName.isEmpty()) {
                 System.out.println("File name cannot be empty!");
                 return;
             }
-            
-            // Get current menu items to determine next position and check for duplicates
+
             var menuItems = menuService.getMenuItems(selectedMenu.getId());
-            
-            // Check if file with same name already exists
+
             boolean fileExists = menuItems.stream()
                 .anyMatch(item -> item.getApp() == null && item.getSubmenu() == null && item.getName().equals(fileName));
-            
+
             if (fileExists) {
                 System.out.println("A file with this name already exists in the menu!");
                 return;
             }
-            
+
             int nextPosition = menuItems.size() + 1;
-            
+
             menuService.addFileToMenu(selectedMenu.getId(), fileName, nextPosition);
             System.out.println("File added to menu successfully: " + fileName);
         } catch (Exception e) {
             System.out.println("Error adding file to menu: " + e.getMessage());
         }
     }
-    
+
     private void renameSubmenu(Menu selectedMenu) {
         try {
             var menuItems = menuService.getMenuItems(selectedMenu.getId());
             var submenus = menuItems.stream()
                 .filter(item -> item.getSubmenu() != null)
                 .toList();
-            
+
             if (submenus.isEmpty()) {
                 System.out.println("No submenus found to rename.");
                 return;
             }
-            
+
             System.out.println("\n=== Select Submenu to Rename ===");
             for (int i = 0; i < submenus.size(); i++) {
                 var item = submenus.get(i);
                 System.out.println((i + 1) + ". " + item.getName());
             }
-            
+
             System.out.print("Select submenu to rename (1-" + submenus.size() + "): ");
             try {
                 int choice = Integer.parseInt(scanner.nextLine());
                 if (choice >= 1 && choice <= submenus.size()) {
                     var itemToRename = submenus.get(choice - 1);
-                    // Get submenu ID to avoid lazy loading issue
                     String submenuId = itemToRename.getSubmenu().getId();
-                    
+
                     System.out.print("Enter new name for submenu: ");
                     String newName = scanner.nextLine().trim();
-                    
+
                     if (newName.isEmpty()) {
                         System.out.println("Submenu name cannot be empty!");
                         return;
                     }
-                    
-                    // Fetch submenu fresh from service to avoid lazy loading
+
                     var submenuOpt = menuService.findMenuById(submenuId);
                     if (submenuOpt.isPresent()) {
                         var submenu = submenuOpt.get();
                         submenu.setName(newName);
                         menuService.saveMenu(submenu);
-                        // Also update the menu item name
                         menuService.renameMenuItem(itemToRename.getId(), newName);
                         System.out.println("Submenu renamed successfully to: " + newName);
                     } else {
@@ -483,31 +467,31 @@ public class MenuManagementMenu {
             System.out.println("Error renaming submenu: " + e.getMessage());
         }
     }
-    
+
     private void openSubmenu(Menu selectedMenu) {
         try {
             var menuItems = menuService.getMenuItems(selectedMenu.getId());
             var submenus = menuItems.stream()
                 .filter(item -> item.getSubmenu() != null)
                 .toList();
-            
+
             if (submenus.isEmpty()) {
                 System.out.println("No submenus found in this menu.");
                 return;
             }
-            
+
             System.out.println("\n=== Select Submenu to Open ===");
             for (int i = 0; i < submenus.size(); i++) {
                 var item = submenus.get(i);
                 System.out.println((i + 1) + ". " + item.getName());
             }
-            
+
             System.out.print("Select submenu (1-" + submenus.size() + "): ");
             try {
                 int choice = Integer.parseInt(scanner.nextLine());
                 if (choice >= 1 && choice <= submenus.size()) {
                     var selectedSubmenu = submenus.get(choice - 1).getSubmenu();
-                    showMenuManagement(selectedSubmenu, true); // true = isSubmenu
+                    showMenuManagement(selectedSubmenu, true);
                 } else {
                     System.out.println("Invalid selection.");
                 }
@@ -518,32 +502,32 @@ public class MenuManagementMenu {
             System.out.println("Error opening submenu: " + e.getMessage());
         }
     }
-    
+
     private void renameFile(Menu selectedMenu) {
         try {
             var menuItems = menuService.getMenuItems(selectedMenu.getId());
             var files = menuItems.stream()
                 .filter(item -> item.getApp() == null && item.getSubmenu() == null)
                 .toList();
-            
+
             if (files.isEmpty()) {
                 System.out.println("No files found to rename.");
                 return;
             }
-            
+
             System.out.println("\n=== Select File to Rename ===");
             for (int i = 0; i < files.size(); i++) {
                 System.out.println((i + 1) + ". " + files.get(i).getName());
             }
             System.out.print("Select file (1-" + files.size() + "): ");
-            
+
             int choice = Integer.parseInt(scanner.nextLine());
-            
+
             if (choice >= 1 && choice <= files.size()) {
                 var selectedItem = files.get(choice - 1);
                 System.out.print("Enter new file name (leave blank to keep '" + selectedItem.getName() + "'): ");
                 String newName = scanner.nextLine().trim();
-                
+
                 if (newName.isEmpty()) {
                     System.out.println("No changes made. File name remains: " + selectedItem.getName());
                 } else {
@@ -559,25 +543,25 @@ public class MenuManagementMenu {
             System.out.println("Error renaming file: " + e.getMessage());
         }
     }
-    
+
     private void removeSubmenu(Menu selectedMenu) {
         try {
             var menuItems = menuService.getMenuItems(selectedMenu.getId());
             var submenus = menuItems.stream()
                 .filter(item -> item.getSubmenu() != null)
                 .toList();
-            
+
             if (submenus.isEmpty()) {
                 System.out.println("No submenus found to remove.");
                 return;
             }
-            
+
             System.out.println("\n=== Select Submenu to Remove ===");
             for (int i = 0; i < submenus.size(); i++) {
                 var item = submenus.get(i);
                 System.out.println((i + 1) + ". " + item.getName());
             }
-            
+
             System.out.print("Select submenu to remove (1-" + submenus.size() + "): ");
             try {
                 int choice = Integer.parseInt(scanner.nextLine());
@@ -595,25 +579,25 @@ public class MenuManagementMenu {
             System.out.println("Error removing submenu: " + e.getMessage());
         }
     }
-    
+
     private void removeApplication(Menu selectedMenu) {
         try {
             var menuItems = menuService.getMenuItems(selectedMenu.getId());
             var apps = menuItems.stream()
                 .filter(item -> item.getApp() != null)
                 .toList();
-            
+
             if (apps.isEmpty()) {
                 System.out.println("No applications found to remove.");
                 return;
             }
-            
+
             System.out.println("\n=== Select Application to Remove ===");
             for (int i = 0; i < apps.size(); i++) {
                 var item = apps.get(i);
                 System.out.println((i + 1) + ". " + item.getName());
             }
-            
+
             System.out.print("Select application to remove (1-" + apps.size() + "): ");
             try {
                 int choice = Integer.parseInt(scanner.nextLine());
@@ -631,25 +615,25 @@ public class MenuManagementMenu {
             System.out.println("Error removing application: " + e.getMessage());
         }
     }
-    
+
     private void removeFile(Menu selectedMenu) {
         try {
             var menuItems = menuService.getMenuItems(selectedMenu.getId());
             var files = menuItems.stream()
                 .filter(item -> item.getApp() == null && item.getSubmenu() == null)
                 .toList();
-            
+
             if (files.isEmpty()) {
                 System.out.println("No files found to remove.");
                 return;
             }
-            
+
             System.out.println("\n=== Select File to Remove ===");
             for (int i = 0; i < files.size(); i++) {
                 var item = files.get(i);
                 System.out.println((i + 1) + ". " + item.getName());
             }
-            
+
             System.out.print("Select file to remove (1-" + files.size() + "): ");
             try {
                 int choice = Integer.parseInt(scanner.nextLine());
@@ -667,21 +651,20 @@ public class MenuManagementMenu {
             System.out.println("Error removing file: " + e.getMessage());
         }
     }
-    
+
     private void addSubmenuToMenu() {
         System.out.println("Submenu functionality would be implemented here.");
     }
-    
+
     private void listMenus() {
         if (currentDeviceId == null) {
             System.out.println("No device currently selected!");
             return;
         }
-        
+
         try {
-            // Get only main menus (not submenus)
             var menus = menuService.getMainMenusByDeviceId(currentDeviceId);
-            
+
             System.out.println("\n=== All Menus ===");
             if (menus.isEmpty()) {
                 System.out.println("No menus found.");

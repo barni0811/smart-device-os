@@ -1,10 +1,14 @@
 package smartdeviceos.cli;
 
-import smartdeviceos.entity.Device;
-import smartdeviceos.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+import smartdeviceos.app.AppService;
+import smartdeviceos.customization.CustomizationService;
+import smartdeviceos.device.Device;
+import smartdeviceos.device.DeviceService;
+import smartdeviceos.menu.MenuService;
+import smartdeviceos.user.UserService;
 
 import java.util.Scanner;
 
@@ -13,28 +17,28 @@ public class SmartDeviceOsCLI implements CommandLineRunner {
 
     @Autowired
     private UserService userService;
-    
+
     @Autowired
     private DeviceService deviceService;
-    
+
     @Autowired
     private AppService appService;
-    
+
     @Autowired
     private MenuService menuService;
-    
+
     @Autowired
     private CustomizationService customizationService;
-    
+
     @Autowired
     private UserManagementMenu userManagementMenu;
-    
+
     @Autowired
     private FamilyManagementMenu familyManagementMenu;
-    
+
     @Autowired
     private SystemStatusMenu systemStatusMenu;
-    
+
     @Autowired
     private DeviceMenu deviceMenu;
 
@@ -43,7 +47,6 @@ public class SmartDeviceOsCLI implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        // Run CLI in a separate thread to avoid blocking REST API
         Thread cliThread = new Thread(() -> {
             try {
                 setupCurrentUser();
@@ -57,17 +60,14 @@ public class SmartDeviceOsCLI implements CommandLineRunner {
 
     private void setupCurrentUser() {
         try {
-            // Clean up any existing duplicate wallpapers/themes
             customizationService.cleanupDuplicateWallpapers();
             customizationService.cleanupDuplicateThemes();
 
             var currentUser = userService.createCurrentUser();
             currentUserId = currentUser.getId();
 
-            // Automatically create default iPhone apps for the default user and device
             appService.createDefaultIPhoneApps();
 
-            // Check if default device already exists
             var existingDevice = deviceService.findDeviceByNameAndUserId("default_device", currentUserId);
             Device defaultDevice;
 
@@ -77,7 +77,6 @@ public class SmartDeviceOsCLI implements CommandLineRunner {
                 defaultDevice = deviceService.createDevice(currentUserId, "default_device");
             }
 
-            // Only create wallpapers/themes if device doesn't have any
             var wallpapers = customizationService.getWallpapersByDeviceId(defaultDevice.getId());
             if (wallpapers == null || wallpapers.isEmpty()) {
                 var defaultWallpaper = customizationService.addDefaultWallpaper(defaultDevice.getId(), "default_wallpaper", "images/default_wallpaper.png");
@@ -93,12 +92,8 @@ public class SmartDeviceOsCLI implements CommandLineRunner {
             var deviceOptForMenu = deviceService.findDeviceByNameAndUserId("default_device", currentUserId);
             if (deviceOptForMenu.isPresent()) {
                 var menu = menuService.createMainMenu(deviceOptForMenu.get().getId(), "default_menu");
-
-                // Create default submenu inside the menu
                 var submenu = menuService.createSubmenu(menu.getId(), "default_submenu");
-                // Add submenu as a menu item to the parent menu
                 menuService.addSubmenuToMenu(menu.getId(), submenu.getId(), "default_submenu", 1);
-
                 addDefaultAppsToMenu(menu.getId());
             }
         } catch (Exception e) {
@@ -109,7 +104,7 @@ public class SmartDeviceOsCLI implements CommandLineRunner {
     private void addDefaultAppsToMenu(String menuId) {
         String[] defaultApps = {"App Store", "Calculator", "Calendar", "Camera", "Phone", "Photos", "Settings"};
         int position = 2;
-        
+
         for (String appName : defaultApps) {
             try {
                 var appOpt = appService.findAppByName(appName);
@@ -134,7 +129,7 @@ public class SmartDeviceOsCLI implements CommandLineRunner {
 
             try {
                 int choice = Integer.parseInt(scanner.nextLine());
-                
+
                 switch (choice) {
                     case 1 -> userManagementMenu.showMenu();
                     case 2 -> {
